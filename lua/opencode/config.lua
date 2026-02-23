@@ -285,6 +285,20 @@ function M.setup(opts)
   end
 
   update_keymap_prefix(M.values.keymap_prefix, M.defaults.keymap_prefix)
+
+  -- Legacy completion settings handling
+  if opts.preferred_completion then
+    vim.notify(
+      '[opencode.nvim] "preferred_completion" is deprecated. Please configure completion "ui.completion" table.',
+      vim.log.levels.WARN
+    )
+    if opts.preferred_completion == 'vim_complete' then
+      M.values.ui.completion.use_native_completion = true
+    end
+    if opts.preferred_completion == 'blink' then
+      M.values.ui.completion.supports_kind_icons = true
+    end
+  end
 end
 
 --- Get the key binding for a specific function in a scope
