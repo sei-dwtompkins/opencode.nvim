@@ -23,7 +23,7 @@ handlers[ms.initialize] = function(params, callback)
       },
     },
     serverInfo = {
-      name = 'opencode_completion_ls',
+      name = 'opencode_ls',
       version = '1.0.0',
     },
   })
@@ -44,6 +44,7 @@ local function get_completion_context(params)
   local line = lines[1] or ''
   local line_to_cursor = line:sub(1, col)
 
+  local trigger_char = ''
   local triggers = completion.get_trigger_characters()
   for _, t in ipairs(triggers) do
     if t and line_to_cursor:match(vim.pesc(t) .. '[^%s]*$') then
@@ -140,7 +141,7 @@ handlers[ms.textDocument_completion] = function(params, callback)
     :catch(function(err)
       local log = require('opencode.log')
       log.error('Error in completion handler: ' .. tostring(err))
-      callback(nil, {})
+      callback(nil, { isIncomplete = false, items = {} })
     end)
 end
 
@@ -148,13 +149,20 @@ end
 ---@return vim.lsp.ClientConfig
 function M.create_config()
   return {
-    name = 'opencode_completion_ls',
+    name = 'opencode_ls',
     cmd = function(dispatchers, config)
       return {
         request = function(method, params, callback)
           if handlers[method] then
             handlers[method](params, callback)
+            return
           end
+          -- Ensure every request receives a response to avoid hanging the client.
+          -- Use JSON-RPC "MethodNotFound" error code (-32601).
+          callback({
+            code = -32601,
+            message = 'Method not found: ' .. tostring(method),
+          }, nil)
         end,
         notify = function() end,
         is_closing = function()

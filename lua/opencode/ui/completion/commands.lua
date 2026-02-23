@@ -54,7 +54,7 @@ local command_source = {
           kind_icon = icons.get('command'),
           detail = command.description,
           documentation = command.documentation .. (command.args and '\n\n* This command takes arguments.' or ''),
-          insert_text = command.name:sub(2),
+          insert_text = command.name:sub(2), -- remove the trigger char from the inserted text
           source_name = 'commands',
           data = {
             name = command.name,
@@ -73,7 +73,7 @@ local command_source = {
     return items
   end),
   on_complete = function(item)
-    if item.kind == 'command' then
+    if item.kind == 'commands' then
       if item.data.fn then
         if item.data.args then
           require('opencode.ui.input_window').set_content(item.insert_text .. ' ')

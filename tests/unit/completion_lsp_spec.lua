@@ -36,7 +36,7 @@ describe('opencode LSP completion', function()
   after_each(function()
     package.loaded['opencode.config'] = nil
     package.loaded['opencode.ui.completion'] = nil
-    package.loaded['opencode.lsp.opencode_completion_ls'] = nil
+    package.loaded['opencode.lsp.opencode_ls'] = nil
     package.loaded['blink.cmp'] = nil
   end)
 
@@ -358,16 +358,16 @@ describe('opencode LSP completion', function()
     end)
   end)
 
-  describe('opencode_completion_ls module', function()
+  describe('opencode_ls module', function()
     local ls
 
     before_each(function()
-      package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-      ls = require('opencode.lsp.opencode_completion_ls')
+      package.loaded['opencode.lsp.opencode_ls'] = nil
+      ls = require('opencode.lsp.opencode_ls')
     end)
 
     after_each(function()
-      package.loaded['opencode.lsp.opencode_completion_ls'] = nil
+      package.loaded['opencode.lsp.opencode_ls'] = nil
     end)
 
     describe('create_config', function()
@@ -375,7 +375,7 @@ describe('opencode LSP completion', function()
         local config = ls.create_config()
 
         assert.is_not_nil(config)
-        assert.are.equal('opencode_completion_ls', config.name)
+        assert.are.equal('opencode_ls', config.name)
         assert.is_function(config.cmd)
       end)
 
@@ -418,8 +418,8 @@ describe('opencode LSP completion', function()
           end,
         })
 
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
 
         local config_obj = ls.create_config()
         local server = config_obj.cmd({}, {})
@@ -435,7 +435,7 @@ describe('opencode LSP completion', function()
         local triggers = result.capabilities.completionProvider.triggerCharacters
         assert.is_true(vim.tbl_contains(triggers, '@'))
         assert.is_true(vim.tbl_contains(triggers, '/'))
-        assert.are.equal('opencode_completion_ls', result.serverInfo.name)
+        assert.are.equal('opencode_ls', result.serverInfo.name)
       end)
     end)
 
@@ -461,8 +461,8 @@ describe('opencode LSP completion', function()
           return { 1, 5 }
         end
 
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
       end)
 
       it('returns completion items from registered sources', function()
@@ -671,8 +671,8 @@ describe('opencode LSP completion', function()
 
     describe('unregistered handler', function()
       it('does not error when an unknown method is called', function()
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
 
         local config_obj = ls.create_config()
         local server = config_obj.cmd({}, {})
@@ -687,8 +687,8 @@ describe('opencode LSP completion', function()
       it('includes kind_icon when supports_kind_icons is true', function()
         -- Simulate supports_kind_icons = true in config
         mock_config.ui.completion.supports_kind_icons = true
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
 
         package.loaded['opencode.ui.completion'] = nil
         local completion = require('opencode.ui.completion')
@@ -753,8 +753,8 @@ describe('opencode LSP completion', function()
 
       it('prefixes label with kind_icon when supports_kind_icons is false', function()
         mock_config.ui.completion.supports_kind_icons = false
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
 
         package.loaded['opencode.ui.completion'] = nil
         local completion = require('opencode.ui.completion')
@@ -817,8 +817,8 @@ describe('opencode LSP completion', function()
 
       it('sets insertText from item.insert_text', function()
         package.loaded['blink.cmp'] = nil
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
 
         package.loaded['opencode.ui.completion'] = nil
         local completion = require('opencode.ui.completion')
@@ -876,8 +876,8 @@ describe('opencode LSP completion', function()
 
       it('embeds the original item in data._opencode_item', function()
         package.loaded['blink.cmp'] = nil
-        package.loaded['opencode.lsp.opencode_completion_ls'] = nil
-        ls = require('opencode.lsp.opencode_completion_ls')
+        package.loaded['opencode.lsp.opencode_ls'] = nil
+        ls = require('opencode.lsp.opencode_ls')
 
         package.loaded['opencode.ui.completion'] = nil
         local completion = require('opencode.ui.completion')
