@@ -107,6 +107,8 @@
 
 ---@class OpencodeCompletionConfig
 ---@field file_sources OpencodeCompletionFileSourcesConfig
+---@field supports_kind_icons boolean
+---@field use_native_completion boolean
 
 ---@class OpencodeLoadingAnimationConfig
 ---@field frames string[]
@@ -196,7 +198,6 @@
 
 ---@class OpencodeConfig
 ---@field preferred_picker 'telescope' | 'fzf' | 'mini.pick' | 'snacks' | 'select' | nil
----@field preferred_completion 'blink' | 'nvim-cmp' | 'vim_complete' | nil -- Preferred completion strategy for mentons and commands
 ---@field default_global_keymaps boolean
 ---@field default_mode 'build' | 'plan' | string -- Default mode
 ---@field default_system_prompt string | nil
@@ -413,6 +414,7 @@
 ---@field on_complete fun(item: CompletionItem): nil Optional callback when item is selected
 ---@field is_incomplete? boolean Whether the completion results are incomplete (for sources that support pagination)
 ---@field get_trigger_character? fun(): string|nil Optional function returning the trigger character for this source
+---@field custom_kind? integer Custom LSP CompletionItemKind registered for this source
 
 ---@class OpencodeContext
 ---@field current_file OpencodeContextFile|nil

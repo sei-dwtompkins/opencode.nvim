@@ -236,6 +236,8 @@ require('opencode').setup({
       snacks_layout = nil -- `layout` opts to pass to Snacks.picker.pick({ layout = ... })
     },
     completion = {
+      supports_kind_icons = false, -- set to true if your completion engine supports kind icons (blink does) it will show icons with proper highlight instead of a generic kind icon
+      use_native_completion = false, -- Set to true if you use native nvim completion otherwise it might not auto trigger in the input window.
       file_sources = {
         enabled = true,
         preferred_cli_tool = 'server', -- 'fd','fdfind','rg','git','server' if nil, it will use the best available tool, 'server' uses opencode cli to get file list (works cross platform) and supports folders
@@ -622,6 +624,7 @@ The plugin provides the following actions that can be triggered via keymaps, com
 - `open_input` (boolean, default: `true`): Whether to open the input window after adding the selection. Set to `false` to add selection silently without changing focus.
 
 Example keymap for silent add:
+
 ```lua
 ['<leader>oY'] = { 'add_visual_selection', { open_input = false }, mode = {'v'} }
 ```

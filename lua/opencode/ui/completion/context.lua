@@ -226,10 +226,13 @@ local function remove_inserted_text(item)
   vim.fn.feedkeys(vim.api.nvim_replace_termcodes('a', true, false, true), 'n')
 end
 
+local custom_kind = require('opencode.ui.completion.kind')
+
 ---@type CompletionSource
 local context_source = {
   name = 'context',
   priority = 1,
+  custom_kind = custom_kind.register('context', icons.get('status_on')),
   complete = Promise.async(function(completion_context)
     local input = completion_context.input or ''
 

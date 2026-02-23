@@ -20,10 +20,13 @@ local get_available_commands = Promise.async(function()
   return results
 end)
 
+local custom_kind = require('opencode.ui.completion.kind')
+
 ---@type CompletionSource
 local command_source = {
   name = 'commands',
   priority = 1,
+  custom_kind = custom_kind.register('commands', require('opencode.ui.icons').get('command')),
   complete = Promise.async(function(context)
     local icons = require('opencode.ui.icons')
     if not context.line:match('^' .. vim.pesc(context.trigger_char) .. '[^%s/]*$') then
@@ -47,7 +50,7 @@ local command_source = {
       if context.input == '' or name_lower:find(input_lower, 1, true) or desc_lower:find(input_lower, 1, true) then
         local item = {
           label = command.name .. (command.args and ' *' or ''),
-          kind = 'command',
+          kind = 'commands',
           kind_icon = icons.get('command'),
           detail = command.description,
           documentation = command.documentation .. (command.args and '\n\n* This command takes arguments.' or ''),

@@ -149,6 +149,8 @@ M.defaults = {
       snacks_layout = nil,
     },
     completion = {
+      supports_kind_icons = false,
+      use_native_completion = false,
       file_sources = {
         enabled = true,
         preferred_cli_tool = 'server',

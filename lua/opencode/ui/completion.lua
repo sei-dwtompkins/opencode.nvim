@@ -114,27 +114,4 @@ function M.is_visible()
   return M._pending and next(M._pending) ~= nil
 end
 
-function M.has_completion_engine()
-  local config = require('opencode.config')
-  local preferred = config.preferred_completion or config.preferred_completion_engine
-  if preferred and preferred ~= 'vim_complete' then
-    return true
-  end
-
-  local known_engines = {
-    'cmp',
-    'blink.cmp',
-    'completion',
-    'mini.completion',
-    'minuet',
-  }
-
-  for _, engine in ipairs(known_engines) do
-    if package.loaded[engine] then
-      return true
-    end
-  end
-  return false
-end
-
 return M

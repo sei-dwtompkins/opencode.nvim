@@ -3,10 +3,13 @@ local Promise = require('opencode.promise')
 
 local M = {}
 
+local custom_kind = require('opencode.ui.completion.kind')
+
 ---@type CompletionSource
 local subagent_source = {
   name = 'subagents',
   priority = 1,
+  custom_kind = custom_kind.register('subagents', icons.get('agent')),
   complete = Promise.async(function(context)
     local subagents = require('opencode.config_file').get_subagents():await()
     local config = require('opencode.config')

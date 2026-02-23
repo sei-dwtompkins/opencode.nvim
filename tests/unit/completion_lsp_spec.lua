@@ -300,46 +300,6 @@ describe('opencode LSP completion', function()
       end)
     end)
 
-    describe('has_completion_engine', function()
-      it('returns true when preferred_completion_engine is set to non-vim_complete', function()
-        mock_config.preferred_completion_engine = 'nvim-cmp'
-        local result = completion.has_completion_engine()
-        assert.is_true(result)
-      end)
-
-      it('returns false when preferred_completion_engine is vim_complete', function()
-        mock_config.preferred_completion_engine = 'vim_complete'
-        -- Make sure no other engines are loaded
-        package.loaded['cmp'] = nil
-        package.loaded['blink.cmp'] = nil
-        package.loaded['completion'] = nil
-        package.loaded['mini.completion'] = nil
-        package.loaded['minuet'] = nil
-        local result = completion.has_completion_engine()
-        assert.is_false(result)
-      end)
-
-      it('returns true when a known engine package is loaded', function()
-        mock_config.preferred_completion_engine = nil
-        -- Simulate cmp being loaded
-        package.loaded['cmp'] = {}
-        local result = completion.has_completion_engine()
-        assert.is_true(result)
-        package.loaded['cmp'] = nil
-      end)
-
-      it('returns false when no engine is present', function()
-        mock_config.preferred_completion_engine = nil
-        package.loaded['cmp'] = nil
-        package.loaded['blink.cmp'] = nil
-        package.loaded['completion'] = nil
-        package.loaded['mini.completion'] = nil
-        package.loaded['minuet'] = nil
-        local result = completion.has_completion_engine()
-        assert.is_false(result)
-      end)
-    end)
-
     describe('on_text_changed', function()
       before_each(function()
         vim.api = vim.api or {}
@@ -724,9 +684,9 @@ describe('opencode LSP completion', function()
     end)
 
     describe('to_lsp_item conversion', function()
-      it('includes kind_icon when blink.cmp is present', function()
-        -- Simulate blink.cmp being available
-        package.loaded['blink.cmp'] = {}
+      it('includes kind_icon when supports_kind_icons is true', function()
+        -- Simulate supports_kind_icons = true in config
+        mock_config.ui.completion.supports_kind_icons = true
         package.loaded['opencode.lsp.opencode_completion_ls'] = nil
         ls = require('opencode.lsp.opencode_completion_ls')
 
@@ -784,15 +744,15 @@ describe('opencode LSP completion', function()
         assert.are.equal(1, #callback_result.items)
 
         local item = callback_result.items[1]
-        -- When blink.cmp is present, label should not have kind_icon prefix
+        -- When supports_kind_icons is true, label should not have kind_icon prefix
         assert.are.equal('BlinkItem', item.label)
         assert.is_not_nil(item.kind_icon)
 
-        package.loaded['blink.cmp'] = nil
+        mock_config.ui.completion.supports_kind_icons = false
       end)
 
-      it('prefixes label with kind_icon when blink.cmp is absent', function()
-        package.loaded['blink.cmp'] = nil
+      it('prefixes label with kind_icon when supports_kind_icons is false', function()
+        mock_config.ui.completion.supports_kind_icons = false
         package.loaded['opencode.lsp.opencode_completion_ls'] = nil
         ls = require('opencode.lsp.opencode_completion_ls')
 
@@ -850,9 +810,9 @@ describe('opencode LSP completion', function()
         assert.are.equal(1, #callback_result.items)
 
         local item = callback_result.items[1]
-        -- When blink.cmp is absent, label should be prefixed with kind_icon
+        -- When supports_kind_icons is false, label should be prefixed with kind_icon
         assert.is_true(item.label:find('MyFile') ~= nil)
-        assert.is_nil(item.kind_icon)
+        assert.is_true(item.label:find('') ~= nil) -- kind_icon is prepended to label
       end)
 
       it('sets insertText from item.insert_text', function()

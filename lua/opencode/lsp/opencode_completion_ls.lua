@@ -1,3 +1,4 @@
+local config = require('opencode.config')
 ---In-process LSP server for opencode completion
 ---Provides completion for files, subagents, commands, and context items
 ---Works with any LSP-compatible completion plugin (blink.cmp, nvim-cmp, etc.)
@@ -60,10 +61,8 @@ local function get_completion_context(params)
   return word, trigger_char, line
 end
 
-local function supports_kind_icons()
-  -- only blink.cmp supports kind icons currently, so we check for its presence
-  local has_blink_cmp = pcall(require, 'blink.cmp')
-  return has_blink_cmp
+function M.supports_kind_icons()
+  return config.ui.completion.supports_kind_icons
 end
 
 ---Convert opencode CompletionItem to LSP CompletionItem
@@ -72,12 +71,11 @@ end
 ---@return lsp.CompletionItem
 local function to_lsp_item(item, index)
   local source = require('opencode.ui.completion').get_source_by_name(item.source_name)
-
   local lsp_item = {
-    label = (supports_kind_icons() and '' or (item.kind_icon .. ' ')) .. item.label,
-    kind = vim.lsp.protocol.CompletionItemKind.Text,
-    kind_icon = supports_kind_icons() and item.kind_icon or nil, -- Only include kind_icon if supported
+    label = (M.supports_kind_icons() and '' or item.kind_icon .. ' ') .. item.label,
+    kind = source.custom_kind or vim.lsp.protocol.CompletionItemKind.Function,
     kind_hl = item.kind_hl,
+    kind_icon = M.supports_kind_icons() and item.kind_icon or '',
     detail = item.detail,
     documentation = item.documentation and {
       kind = 'plaintext',
